@@ -1,0 +1,29 @@
+services:
+  <SERVICE_NAME>-<USER_NAME>: # <SERVICE_NAME> as your service name (objective), <USER_NAME> as your user name
+    build:
+      context: .
+      args:
+        SSH_PUBLIC_KEY: "${SSH_PUBLIC_KEY}" # SSH public key
+    image: cuda12.8.1-ubuntu22.04-zsh:v1
+    container_name: cuda12.8.1-ubuntu22.04-zsh-<USER_NAME> # <USER_NAME> as your user name
+    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    ports:
+      - "<HOST_PORT>:22" # <HOST_PORT> as your host port for SSH port forwarding (host:container), 
+    volumes:
+      - /home/<USER_NAME>/workspace:/root/workspace # <USER_NAME> as your host user name for binding host workspace to container workspace for persistency
+      # - external-disk1:/mnt/data1 # bind external disk to container
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all # visible all GPUs
+    stdin_open: true
+    tty: true
+
+# If you want to bind external disk to container, you can use the following code
+# volumes:
+#   # Define the docker volume
+#   external-disk1:
+#     external: true
