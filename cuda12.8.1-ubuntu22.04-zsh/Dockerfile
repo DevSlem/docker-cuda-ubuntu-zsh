@@ -43,11 +43,6 @@ RUN mkdir /var/run/sshd && \
     ssh-keygen -A && \
     sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
     sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
-ARG SSH_PUBLIC_KEY=""
-RUN mkdir -p /root/.ssh && \
-    echo "${SSH_PUBLIC_KEY}" > /root/.ssh/authorized_keys && \
-    chmod 600 /root/.ssh/authorized_keys && \
-    chmod 700 /root/.ssh
 
 # Expose SSH port
 EXPOSE 22
@@ -105,6 +100,12 @@ RUN chsh -s /usr/bin/zsh root
 # Copy test script
 RUN mkdir -p /root/test
 COPY torch_test.py /root/test/torch_test.py
+
+ARG SSH_PUBLIC_KEY=""
+RUN mkdir -p /root/.ssh && \
+    echo "${SSH_PUBLIC_KEY}" > /root/.ssh/authorized_keys && \
+    chmod 600 /root/.ssh/authorized_keys && \
+    chmod 700 /root/.ssh
 
 # Start SSH service and ZSH shell by default
 CMD ["/bin/bash", "-c", "/usr/sbin/sshd -D & zsh"]
