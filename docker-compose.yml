@@ -1,11 +1,11 @@
 services:
-  <SERVICE_NAME>-<USER_NAME>: # <SERVICE_NAME> as your service name (objective), <USER_NAME> as your user name
+  <USER_NAME>.<SERVICE_NAME>: # <USER_NAME> as your user name, <SERVICE_NAME> as your service name (objective)
     build:
-      context: .
+      context: ./cuda12.8.1-ubuntu22.04-zsh # Dockerfile path
       args:
         SSH_PUBLIC_KEY: "${SSH_PUBLIC_KEY}" # SSH public key
     image: cuda12.8.1-ubuntu22.04-zsh:v1
-    container_name: cuda12.8.1-ubuntu22.04-zsh-<USER_NAME> # <USER_NAME> as your user name
+    container_name: <USER_NAME>.ai-dev-env # <USER_NAME> as your user name
     runtime: nvidia
     deploy:
       resources:
