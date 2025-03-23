@@ -1,5 +1,5 @@
 # Use the base image
-FROM nvidia/cuda:12.8.1-cudnn-devel-ubuntu22.04
+FROM nvidia/cuda:11.3.1-cudnn8-devel-ubuntu20.04
 
 # Set environment variable to disable interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive
@@ -15,8 +15,6 @@ RUN apt-get update && apt-get install -y \
     zsh \
     openssh-server \
     tmux \
-    ruby \
-    ruby-dev \
     libncurses5-dev \
     locales \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -88,14 +86,6 @@ RUN mkdir -p ~/miniconda3 && \
     echo "export PATH=~/miniconda3/bin:\$PATH" >> ~/.zshrc && \
     ~/miniconda3/bin/conda init --all && \
     ~/miniconda3/bin/conda config --set auto_activate_base false
-
-# Install Color LS
-RUN gem install colorls
-
-# Configure alias for Color LS in .zshrc
-RUN echo "alias ls='colorls'" >> ~/.zshrc && \
-    echo "alias ll='colorls -lA --sd'" >> ~/.zshrc && \
-    echo "source ~/.zshrc" >> ~/.bashrc
 
 # Set root's default shell to zsh
 RUN chsh -s /usr/bin/zsh root
