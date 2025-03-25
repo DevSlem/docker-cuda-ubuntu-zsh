@@ -87,6 +87,12 @@ RUN mkdir -p ~/miniconda3 && \
     ~/miniconda3/bin/conda init --all && \
     ~/miniconda3/bin/conda config --set auto_activate_base false
 
+# Add conda environment variable settings to ~/.zshrc
+RUN echo 'export PATH="/root/miniconda3/envs/$CONDA_DEFAULT_ENV/bin:$PATH"' >> ~/.zshrc && \
+    echo 'if [[ -n "$CONDA_DEFAULT_ENV" ]]; then' >> ~/.zshrc && \
+    echo '    export PATH="/root/miniconda3/envs/$CONDA_DEFAULT_ENV/bin:$PATH"' >> ~/.zshrc && \
+    echo 'fi' >> ~/.zshrc
+
 # Set root's default shell to zsh
 RUN chsh -s /usr/bin/zsh root
 
