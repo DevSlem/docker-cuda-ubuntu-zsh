@@ -1,11 +1,34 @@
 #!/bin/bash
 
+print_nvidia_docker_smi() {
+    local docker_gpu_process_csv=$1
+    # Print header with a separator line below it
+    local docker_gpu_process_csv_print=$(echo -e "$docker_gpu_process_csv" | column -t -s ',')
+
+    # Calculate the header length dynamically
+    local header=$(echo "$docker_gpu_process_csv_print" | head -n 1)
+    local header_length=${#header}
+
+    # Print the header
+    echo "$header"
+
+    # Print a line of dashes matching the header length
+    printf '=%.0s' $(seq 1 $header_length)
+    echo
+
+    # Print the rows below the header
+    echo "$(echo "$docker_gpu_process_csv_print" | tail -n +2)"
+}
+
 nvidia-docker-smi() {
     GPU_PROCESS_INFO=$(nvidia-smi --query-compute-apps=pid,name,used_memory,gpu_bus_id --format=csv,noheader)
 
+    DOCKER_GPU_PROCESS_CSV="GPU,Container ID,Container Name,PID,Process,GPU Memory Usage (MiB)
+"
+
     # If there is no info, exit
     if [ -z "$GPU_PROCESS_INFO" ]; then
-        echo "No GPU processes found."
+        print_nvidia_docker_smi "$DOCKER_GPU_PROCESS_CSV"
         exit 0
     fi
 
@@ -14,11 +37,8 @@ nvidia-docker-smi() {
     # Docker processes
     DOCKER_PROCESS_INFO=$(ps -e -o pid,cgroup | grep docker)
 
-    # Docker gpu process csv variable
-    # Header: container_id,pid,name,used_memory,gpu_index
-    # DOCKER_GPU_PROCESS_CSV=""
+    # Get Docker processes with GPU usage
     DOCKER_GPU_PROCESS_LIST=()
-
     while IFS=',' read -r pid name used_memory bus_id; do
         pid=$(echo "$pid" | xargs)
         # Get the GPU index from the GPU_INFO using the bus_id
@@ -46,26 +66,14 @@ nvidia-docker-smi() {
 
     done <<< "$GPU_PROCESS_INFO"
 
-    DOCKER_GPU_PROCESS_CSV="GPU,Container ID,Container Name,PID,Process,GPU Memory Usage (MiB)
-"
+    # If DOCKER_GPU_PROCESS_LIST is empty, exit
+    if [ ${#DOCKER_GPU_PROCESS_LIST[@]} -eq 0 ]; then
+        print_nvidia_docker_smi "$DOCKER_GPU_PROCESS_CSV"
+        exit 0
+    fi
+
     DOCKER_GPU_PROCESS_CSV+=$(echo "${DOCKER_GPU_PROCESS_LIST[@]}" | tr ' ' '\n' | sort -t ',' -k1,1n -k6,6r -k2,2)
-
-    # Print header with a separator line below it
-    DOCKER_GPU_PROCESS_CSV_PRINT=$(echo -e "$DOCKER_GPU_PROCESS_CSV" | column -t -s ',')
-
-    # Calculate the header length dynamically
-    header=$(echo "$DOCKER_GPU_PROCESS_CSV_PRINT" | head -n 1)
-    header_length=${#header}
-
-    # Print the header
-    echo "$header"
-
-    # Print a line of dashes matching the header length
-    printf '=%.0s' $(seq 1 $header_length)
-    echo
-
-    # Print the rows below the header
-    echo "$(echo "$DOCKER_GPU_PROCESS_CSV_PRINT" | tail -n +2)"
+    print_nvidia_docker_smi "$DOCKER_GPU_PROCESS_CSV"
 }
 
 nvidia-docker-smi
