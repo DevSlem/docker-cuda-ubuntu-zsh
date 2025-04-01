@@ -81,3 +81,16 @@ Finally, run the below command:
 ```bash
 docker compose up --build
 ```
+
+Install nvidia-docker-smi shell script:
+
+```bash
+chmod +x nvidia-docker-smi.sh
+sudo mv nvidia-docker-smi.sh /usr/local/bin/nvidia-docker-smi
+```
+
+Run the command:
+
+```bash
+nvidia-docker-smi
+```
