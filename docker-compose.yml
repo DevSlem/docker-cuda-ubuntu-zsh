@@ -1,11 +1,9 @@
 services:
-  <USER_NAME>.base-ai-dev-env: # <USER_NAME> as your user name
+  <USER_NAME>.ai-dev-env-base: # <USER_NAME> as your user name
     build:
       context: ./cuda12.8.1-ubuntu22.04-zsh # Dockerfile path
-      args:
-        SSH_PUBLIC_KEY: "${SSH_PUBLIC_KEY}" # SSH public key
-    image: cuda12.8.1-ubuntu22.04-zsh:v1
-    container_name: <USER_NAME>.base-ai-dev-env-cuda12.8.1 # <USER_NAME> as your user name
+    image: ai-dev-env:0.1.0-cuda12.8.1-ubuntu22.04
+    container_name: <USER_NAME>.ai-dev-env-base # <USER_NAME> as your user name
     runtime: nvidia
     deploy:
       resources:
@@ -19,6 +17,7 @@ services:
       # - external-disk1:/mnt/data1 # bind external disk to container
     environment:
       - NVIDIA_VISIBLE_DEVICES=all # visible all GPUs
+      - SSH_PUBLIC_KEY=${SSH_PUBLIC_KEY} # SSH public key
     stdin_open: true
     tty: true
 

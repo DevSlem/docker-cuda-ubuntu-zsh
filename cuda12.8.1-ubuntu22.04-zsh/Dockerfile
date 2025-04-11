@@ -95,6 +95,10 @@ RUN echo 'export PATH="/root/miniconda3/envs/$CONDA_DEFAULT_ENV/bin:$PATH"' >> ~
     echo '    export PATH="/root/miniconda3/envs/$CONDA_DEFAULT_ENV/bin:$PATH"' >> ~/.zshrc && \
     echo 'fi' >> ~/.zshrc
 
+# PIP for root user
+RUN echo "export PIP_ROOT_USER_ACTION=ignore" >> ~/.zshrc && \
+    echo "export PIP_ROOT_USER_ACTION=ignore" >> ~/.bashrc
+
 # Install Color LS
 RUN gem install colorls
 
@@ -110,11 +114,12 @@ RUN chsh -s /usr/bin/zsh root
 RUN mkdir -p /root/test
 COPY torch_test.py /root/test/torch_test.py
 
-ARG SSH_PUBLIC_KEY=""
-RUN mkdir -p /root/.ssh && \
-    echo "${SSH_PUBLIC_KEY}" > /root/.ssh/authorized_keys && \
-    chmod 600 /root/.ssh/authorized_keys && \
-    chmod 700 /root/.ssh
+# Define environment variables for SSH
+ENV SSH_PUBLIC_KEY=""
 
-# Start SSH service and ZSH shell by default
-CMD ["/bin/bash", "-c", "/usr/sbin/sshd -D & zsh"]
+# Copy entrypoint script
+COPY entrypoint.sh /root/.entrypoint.sh
+RUN chmod +x /root/.entrypoint.sh
+
+# Run the entrypoint script
+CMD ["/root/.entrypoint.sh"]
