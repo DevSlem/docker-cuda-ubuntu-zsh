@@ -42,47 +42,20 @@ Run the container by:
 docker run --rm -it --gpus all --name ai-dev-env cuda12.8.1-ubuntu22.04-zsh:v1
 ```
 
-Also, this repository provides `docker-compose.yml` for handling multiple containers:
+Also, this repository provides `docker-compose-template.yml` for handling multiple containers. You can easily create and configure a `docker-compose.yml` file with `<USER_NAME>`, `<HOST_PORT>` and `<VERSION>` by entering the following command:
 
-```yaml
-services:
-  <USER_NAME>.base-ai-dev-env: # <USER_NAME> as your user name
-    build:
-      context: ./cuda12.8.1-ubuntu22.04-zsh # Dockerfile path
-      args:
-        SSH_PUBLIC_KEY: "${SSH_PUBLIC_KEY}" # SSH public key
-    image: cuda12.8.1-ubuntu22.04-zsh:v1
-    container_name: <USER_NAME>.base-ai-dev-env-cuda12.8.1 # <USER_NAME> as your user name
-    runtime: nvidia
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - capabilities: [gpu]
-    ports:
-      - "<HOST_PORT>:22" # <HOST_PORT> as your host port for SSH port forwarding (host:container), 
-    volumes:
-      - /home/<USER_NAME>/workspace:/root/workspace # <USER_NAME> as your host user name for binding host workspace to container workspace for persistency
-      # - external-disk1:/mnt/data1 # bind external disk to container
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=all # visible all GPUs
-    stdin_open: true
-    tty: true
+```bash
+bash config.sh
 ```
 
-Change `<USER_NAME>` as your host user name or remove them and `<HOST_PORT>` as your host port for SSH port forwarding. Then, set environment variable `SSH_PUBLIC_KEY` by:
+Then, Start the container by:
 
 ```bash
 export SSH_PUBLIC_KEY="<YOUR_SSH_PUBLIC_KEYS>"
+docker compose up --build -d
 ```
 
-Finally, run the below command:
-
-```bash
-docker compose up --build
-```
-
-Install nvidia-docker-smi shell script:
+`nvidia-smi` doesn't show whether processes using GPU are running in Docker containers or not. To check it, you can use the `nvidia-docker-smi` shell script provided in this repository. Install nvidia-docker-smi shell script:
 
 ```bash
 chmod +x nvidia-docker-smi.sh
@@ -93,4 +66,13 @@ Run the command:
 
 ```bash
 nvidia-docker-smi
+```
+
+Example output:
+
+```bash
+GPU  Container ID  Container Name             PID     Process  GPU Memory Usage (MiB)
+=====================================================================================
+1    abcdefg12345  testuser.ai-dev-env-base   884311  python   280
+2    hijklmn67890  otheruser.ai-dev-env-base  866294  python   6316
 ```
