@@ -82,16 +82,11 @@ RUN mkdir -p ~/miniconda3 && \
     wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh && \
     bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3 && \
     rm ~/miniconda3/miniconda.sh && \
-    echo "export PATH=~/miniconda3/bin:\$PATH" >> ~/.bashrc && \
-    echo "export PATH=~/miniconda3/bin:\$PATH" >> ~/.zshrc && \
     ~/miniconda3/bin/conda init --all && \
     ~/miniconda3/bin/conda config --set auto_activate_base false
 
-# Add conda environment variable settings to ~/.zshrc
-RUN echo 'export PATH="/root/miniconda3/envs/$CONDA_DEFAULT_ENV/bin:$PATH"' >> ~/.zshrc && \
-    echo 'if [[ -n "$CONDA_DEFAULT_ENV" ]]; then' >> ~/.zshrc && \
-    echo '    export PATH="/root/miniconda3/envs/$CONDA_DEFAULT_ENV/bin:$PATH"' >> ~/.zshrc && \
-    echo 'fi' >> ~/.zshrc
+# Install uv
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # PIP for root user
 RUN echo "export PIP_ROOT_USER_ACTION=ignore" >> ~/.zshrc && \
