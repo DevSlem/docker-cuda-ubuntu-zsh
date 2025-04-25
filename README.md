@@ -13,6 +13,7 @@ These Dockerfiles provide the following environments:
   * CUDA
   * CUDNN
   * Anaconda
+  * uv
 * **ZSH shell**:
   * Oh My Zsh
   * Powerlevel10k theme
