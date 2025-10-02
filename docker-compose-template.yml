@@ -11,7 +11,7 @@ services:
           devices:
             - capabilities: [gpu]
     ports:
-      - "<HOST_PORT>:22" # <HOST_PORT> as your host port for SSH port forwarding (host:container), 
+      - "<HOST_PORT>:22" # <HOST_PORT> as your host port for SSH port forwarding (host:container) 
     volumes:
       - /home/<USER_NAME>/workspace:/root/workspace # <USER_NAME> as your host user name for binding host workspace to container workspace for persistency
       # - external-disk1:/mnt/data1 # bind external disk to container
@@ -20,6 +20,7 @@ services:
       - SSH_PUBLIC_KEY=${SSH_PUBLIC_KEY} # SSH public key
     stdin_open: true
     tty: true
+    ipc: host # It is useful when you use multiple workers in PyTorch.
 
 # If you want to bind external disk to container, you can use the following code
 # volumes:
