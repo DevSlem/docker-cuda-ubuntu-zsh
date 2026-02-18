@@ -88,7 +88,22 @@ RUN mkdir -p ~/miniconda3 && \
     ~/miniconda3/bin/conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main && \
     ~/miniconda3/bin/conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r && \
     echo ". /root/miniconda3/etc/profile.d/conda.sh" >> /etc/bash.bashrc
-ENV BASH_ENV=/root/miniconda3/etc/profile.d/conda.sh
+
+# Enable conda in non-interactive zsh (e.g. AI agent bash tools)
+RUN { echo '# >>> conda initialize >>>'; \
+      echo '__conda_setup="$('\''/root/miniconda3/bin/conda'\'' '\''shell.zsh'\'' '\''hook'\'' 2> /dev/null)"'; \
+      echo 'if [ $? -eq 0 ]; then'; \
+      echo '    eval "$__conda_setup"'; \
+      echo 'else'; \
+      echo '    if [ -f "/root/miniconda3/etc/profile.d/conda.sh" ]; then'; \
+      echo '        . "/root/miniconda3/etc/profile.d/conda.sh"'; \
+      echo '    else'; \
+      echo '        export PATH="/root/miniconda3/bin:$PATH"'; \
+      echo '    fi'; \
+      echo 'fi'; \
+      echo 'unset __conda_setup'; \
+      echo '# <<< conda initialize <<<'; \
+    } >> ~/.zshenv
 
 # Install uv
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
