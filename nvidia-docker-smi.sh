@@ -35,7 +35,7 @@ nvidia-docker-smi() {
     GPU_INFO=$(nvidia-smi --query-gpu=index,gpu_bus_id --format=csv,noheader)
 
     # Docker processes
-    DOCKER_PROCESS_INFO=$(ps -e -o pid,cgroup | grep docker)
+    DOCKER_PROCESS_INFO=$(ps -e -o pid,cgroup | grep -E 'docker[-/][a-f0-9]')
 
     # Get Docker processes with GPU usage
     DOCKER_GPU_PROCESS_LIST=()
@@ -45,7 +45,7 @@ nvidia-docker-smi() {
         gpu_index=$(echo "$GPU_INFO" | grep "$bus_id" | awk -F ',' '{print $1}' | xargs)
 
         docker_gpu_process=$(echo "$DOCKER_PROCESS_INFO" | grep "$pid")
-        
+
         # IF the PID is not in the Docker process list, skip
         if [ -z "$docker_gpu_process" ]; then
             continue
@@ -57,7 +57,7 @@ nvidia-docker-smi() {
         name=$(echo "$name" | xargs)
 
         # Get the container ID from the cgroup
-        container_id=$(echo "$docker_gpu_process" | awk '{print $2}' | cut -d '-' -f 2 | cut -d '.' -f 1 | xargs)
+        container_id=$(echo "$docker_gpu_process" | grep -oE 'docker[-/][a-f0-9]{64}' | head -1 | sed 's/docker[-\/]//')
         # Get the container name
         container_name=$(docker ps --filter "id=$container_id" --format "{{.Names}}")
         container_id=${container_id:0:12}
