@@ -12,6 +12,8 @@ fi
 
 # ── 1) Search tags ──────────────────────────────────────────────
 fetch_tags() {
+    echo "Docker Hub: https://hub.docker.com/r/nvidia/cuda/tags"
+    echo ""
     read -rp "CUDA version filter (e.g. 12, 12.8, leave empty for all): " CUDA_FILTER
     read -rp "Ubuntu version filter (e.g. 22, 24.04, leave empty for all): " UBUNTU_FILTER
 
