@@ -2,7 +2,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-TEMPLATE_DIR="$SCRIPT_DIR/default"
+TEMPLATE_DIR="$SCRIPT_DIR/build_base"
 DEFAULT_DIR_NAME="cuda12.8.1-ubuntu22.04-zsh"
 
 if [ ! -d "$TEMPLATE_DIR" ]; then
