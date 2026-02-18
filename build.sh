@@ -121,7 +121,7 @@ for r in data.get('results', []):
 
     echo "Creating '$DIR_NAME'..."
     cp -r "$TEMPLATE_DIR" "$TARGET_DIR"
-    sed -i"s|<BASE_IMAGE_TAG>|${SELECTED_TAG}|g" "$TARGET_DIR/Dockerfile"
+    sed -i "s|<BASE_IMAGE_TAG>|${SELECTED_TAG}|g" "$TARGET_DIR/Dockerfile"
 
     echo "Done! Created '$DIR_NAME/' with FROM nvidia/cuda:${SELECTED_TAG}"
     echo ""
@@ -200,21 +200,21 @@ configure() {
     mkdir -p ~/workspace
     cp "$SCRIPT_DIR/docker-compose-template.yml" "$SCRIPT_DIR/docker-compose.yml"
 
-    sed -i"s/<USER_NAME>/$USER_NAME/g" "$SCRIPT_DIR/docker-compose.yml"
-    sed -i"s/<HOST_PORT>/$SSH_PORT/g" "$SCRIPT_DIR/docker-compose.yml"
-    sed -i"s/<VERSION>/$VERSION/g" "$SCRIPT_DIR/docker-compose.yml"
-    sed -i"s/<DIR_NAME>/$DIR_NAME/g" "$SCRIPT_DIR/docker-compose.yml"
+    sed -i "s/<USER_NAME>/$USER_NAME/g" "$SCRIPT_DIR/docker-compose.yml"
+    sed -i "s/<HOST_PORT>/$SSH_PORT/g" "$SCRIPT_DIR/docker-compose.yml"
+    sed -i "s/<VERSION>/$VERSION/g" "$SCRIPT_DIR/docker-compose.yml"
+    sed -i "s/<DIR_NAME>/$DIR_NAME/g" "$SCRIPT_DIR/docker-compose.yml"
 
     if [ ${#volume_name_list[@]} -gt 0 ]; then
-        sed -i"\$a volumes:" "$SCRIPT_DIR/docker-compose.yml"
+        sed -i "\$a volumes:" "$SCRIPT_DIR/docker-compose.yml"
         for i in "${!volume_name_list[@]}"; do
             vol_name=${volume_name_list[$i]}
             vol_device=${volume_device_list[$i]}
-            sed -i"/# - external-disk1:\/mnt\/data1 # bind external disk to container/a\\
+            sed -i "/# - external-disk1:\/mnt\/data1 # bind external disk to container/a\\
       - $vol_name:$vol_device" "$SCRIPT_DIR/docker-compose.yml"
-            sed -i"\$a\\
+            sed -i "\$a\\
   $vol_name:" "$SCRIPT_DIR/docker-compose.yml"
-            sed -i"\$a\\
+            sed -i "\$a\\
     external: true" "$SCRIPT_DIR/docker-compose.yml"
         done
         echo "${#volume_name_list[@]} external disks will be bound to the container."
