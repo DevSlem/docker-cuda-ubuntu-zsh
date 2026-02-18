@@ -1,8 +1,8 @@
 services:
   <USER_NAME>.ai-dev-env-base: # <USER_NAME> as your user name
     build:
-      context: ./cuda12.8.1-ubuntu22.04-zsh # Dockerfile path
-    image: ai-dev-env:<VERSION>-cuda12.8.1-ubuntu22.04
+      context: ./<DIR_NAME> # Dockerfile path
+    image: ai-dev-env:<VERSION>-<DIR_NAME>
     container_name: <USER_NAME>.ai-dev-env-base # <USER_NAME> as your user name
     runtime: nvidia
     deploy:

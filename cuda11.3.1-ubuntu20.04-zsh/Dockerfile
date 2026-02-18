@@ -78,12 +78,14 @@ RUN echo "source ~/.p10k.zsh" >> ~/.zshrc
 ENV SHELL=/usr/bin/zsh
 
 # Install Miniconda3
+ENV PATH="/root/miniconda3/bin:$PATH"
 RUN mkdir -p ~/miniconda3 && \
     wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh && \
     bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3 && \
     rm ~/miniconda3/miniconda.sh && \
     ~/miniconda3/bin/conda init --all && \
-    ~/miniconda3/bin/conda config --set auto_activate_base false
+    ~/miniconda3/bin/conda config --set auto_activate_base false && \
+    echo ". /root/miniconda3/etc/profile.d/conda.sh" >> /etc/bash.bashrc
 
 # Install uv
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
