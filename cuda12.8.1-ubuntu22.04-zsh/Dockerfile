@@ -15,8 +15,6 @@ RUN apt-get update && apt-get install -y \
     zsh \
     openssh-server \
     tmux \
-    ruby \
-    ruby-dev \
     libncurses5-dev \
     locales \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -94,13 +92,18 @@ RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 RUN echo "export PIP_ROOT_USER_ACTION=ignore" >> ~/.zshrc && \
     echo "export PIP_ROOT_USER_ACTION=ignore" >> ~/.bashrc
 
-# Install Color LS
-RUN gem install colorls
+# Install lsd
+RUN LSD_VERSION=$(curl -s https://api.github.com/repos/lsd-rs/lsd/releases/latest | grep '"tag_name"' | cut -d '"' -f 4) && \
+    curl -fsSL "https://github.com/lsd-rs/lsd/releases/download/${LSD_VERSION}/lsd-musl_${LSD_VERSION#v}_amd64.deb" -o /tmp/lsd.deb && \
+    dpkg -i /tmp/lsd.deb && \
+    rm /tmp/lsd.deb
 
-# Configure alias for Color LS in .zshrc
-RUN echo "alias ls='colorls'" >> ~/.zshrc && \
-    echo "alias ll='colorls -lA --sd'" >> ~/.zshrc && \
-    echo "source ~/.zshrc" >> ~/.bashrc
+# Configure alias for lsd
+RUN echo "alias ls='lsd'" >> ~/.zshrc && \
+    echo "alias l='lsd -l'" >> ~/.zshrc && \
+    echo "alias la='lsd -a'" >> ~/.zshrc && \
+    echo "alias lla='lsd -la'" >> ~/.zshrc && \
+    echo "alias lt='lsd --tree'" >> ~/.zshrc
 
 # Set root's default shell to zsh
 RUN chsh -s /usr/bin/zsh root
