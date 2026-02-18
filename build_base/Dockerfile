@@ -1,5 +1,5 @@
 # Use the base image
-FROM nvidia/cuda:12.8.1-cudnn-devel-ubuntu22.04
+FROM nvidia/cuda:<BASE_IMAGE_TAG>
 
 # Set environment variable to disable interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive

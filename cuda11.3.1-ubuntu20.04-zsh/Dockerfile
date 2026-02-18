@@ -78,19 +78,37 @@ RUN echo "source ~/.p10k.zsh" >> ~/.zshrc
 ENV SHELL=/usr/bin/zsh
 
 # Install Miniconda3
+ENV PATH="/root/miniconda3/bin:$PATH"
 RUN mkdir -p ~/miniconda3 && \
     wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh && \
     bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3 && \
     rm ~/miniconda3/miniconda.sh && \
     ~/miniconda3/bin/conda init --all && \
-    ~/miniconda3/bin/conda config --set auto_activate_base false
+    ~/miniconda3/bin/conda config --set auto_activate_base false && \
+    echo ". /root/miniconda3/etc/profile.d/conda.sh" >> /etc/bash.bashrc
 
 # Install uv
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 
+# Install Claude Code
+RUN curl -fsSL https://claude.ai/install.sh | bash
+
 # PIP for root user
 RUN echo "export PIP_ROOT_USER_ACTION=ignore" >> ~/.zshrc && \
     echo "export PIP_ROOT_USER_ACTION=ignore" >> ~/.bashrc
+
+# Install lsd
+RUN LSD_VERSION=$(curl -s https://api.github.com/repos/lsd-rs/lsd/releases/latest | grep '"tag_name"' | cut -d '"' -f 4) && \
+    curl -fsSL "https://github.com/lsd-rs/lsd/releases/download/${LSD_VERSION}/lsd-musl_${LSD_VERSION#v}_amd64.deb" -o /tmp/lsd.deb && \
+    dpkg -i /tmp/lsd.deb && \
+    rm /tmp/lsd.deb
+
+# Configure alias for lsd
+RUN echo "alias ls='lsd --group-dirs=first'" >> ~/.zshrc && \
+    echo "alias l='lsd -l --group-dirs=first'" >> ~/.zshrc && \
+    echo "alias la='lsd -a --group-dirs=first'" >> ~/.zshrc && \
+    echo "alias lla='lsd -la --group-dirs=first'" >> ~/.zshrc && \
+    echo "alias lt='lsd --tree'" >> ~/.zshrc
 
 # Set root's default shell to zsh
 RUN chsh -s /usr/bin/zsh root
