@@ -105,6 +105,42 @@ docker compose up --build -d
 
 ---
 
+## Troubleshooting
+
+### `Failed to initialize NVML: Unknown Error`
+
+When a Docker container runs for a long time, `nvidia-smi` inside the container may fail with this error. This is caused by a cgroup driver mismatch between Docker and the NVIDIA container runtime.
+
+**Fix:**
+
+1. Edit `/etc/nvidia-container-runtime/config.toml`:
+
+```toml
+no-cgroups = false
+```
+
+2. Edit `/etc/docker/daemon.json`:
+
+```json
+{
+    "runtimes": {
+        "nvidia": {
+            "args": [],
+            "path": "nvidia-container-runtime"
+        }
+    },
+    "exec-opts": ["native.cgroupdriver=cgroupfs"]
+}
+```
+
+3. Restart Docker:
+
+```bash
+sudo systemctl restart docker
+```
+
+---
+
 ## nvidia-docker-smi
 
 `nvidia-smi` doesn't show which Docker container a GPU process belongs to.
