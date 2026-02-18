@@ -88,6 +88,7 @@ RUN mkdir -p ~/miniconda3 && \
     ~/miniconda3/bin/conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main && \
     ~/miniconda3/bin/conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r && \
     echo ". /root/miniconda3/etc/profile.d/conda.sh" >> /etc/bash.bashrc
+ENV BASH_ENV=/root/miniconda3/etc/profile.d/conda.sh
 
 # Install uv
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
