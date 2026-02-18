@@ -88,6 +88,9 @@ RUN mkdir -p ~/miniconda3 && \
 # Install uv
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 
+# Install Claude Code
+RUN curl -fsSL https://claude.ai/install.sh | bash
+
 # PIP for root user
 RUN echo "export PIP_ROOT_USER_ACTION=ignore" >> ~/.zshrc && \
     echo "export PIP_ROOT_USER_ACTION=ignore" >> ~/.bashrc
@@ -99,10 +102,10 @@ RUN LSD_VERSION=$(curl -s https://api.github.com/repos/lsd-rs/lsd/releases/lates
     rm /tmp/lsd.deb
 
 # Configure alias for lsd
-RUN echo "alias ls='lsd'" >> ~/.zshrc && \
-    echo "alias l='lsd -l'" >> ~/.zshrc && \
-    echo "alias la='lsd -a'" >> ~/.zshrc && \
-    echo "alias lla='lsd -la'" >> ~/.zshrc && \
+RUN echo "alias ls='lsd --group-dirs=first'" >> ~/.zshrc && \
+    echo "alias l='lsd -l --group-dirs=first'" >> ~/.zshrc && \
+    echo "alias la='lsd -a --group-dirs=first'" >> ~/.zshrc && \
+    echo "alias lla='lsd -la --group-dirs=first'" >> ~/.zshrc && \
     echo "alias lt='lsd --tree'" >> ~/.zshrc
 
 # Set root's default shell to zsh
