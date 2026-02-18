@@ -85,6 +85,7 @@ RUN mkdir -p ~/miniconda3 && \
     rm ~/miniconda3/miniconda.sh && \
     ~/miniconda3/bin/conda init --all && \
     ~/miniconda3/bin/conda config --set auto_activate_base false && \
+    ~/miniconda3/bin/conda config --set tos_accepted true && \
     echo ". /root/miniconda3/etc/profile.d/conda.sh" >> /etc/bash.bashrc
 
 # Install uv
