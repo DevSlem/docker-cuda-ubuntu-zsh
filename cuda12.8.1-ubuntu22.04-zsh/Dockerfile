@@ -17,6 +17,8 @@ RUN apt-get update && apt-get install -y \
     tmux \
     libncurses5-dev \
     locales \
+    zip \
+    unzip \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install GitHub CLI
